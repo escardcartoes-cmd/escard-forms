@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escard — Formulários</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #f7f8fc;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 32px 16px 64px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 24px rgba(0,0,0,0.08);
+      padding: 36px 36px 40px;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    @media (max-width: 600px) {
+      .card { padding: 24px 18px 32px; }
+    }
+
+    /* HEADER */
+    .escard-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-bottom: 24px;
+      border-bottom: 1px solid #e2e8f0;
+      margin-bottom: 28px;
+    }
+
+    .escard-header img { height: 52px; width: auto; display: block; }
+
+    .logo-fallback {
+      display: none;
+      align-items: center;
+      font-family: 'Sora', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    /* TOGGLE */
+    .form-toggle {
+      display: flex;
+      background: #f1f5f9;
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 28px;
+    }
+
+    .toggle-btn {
+      flex: 1; padding: 10px 16px; border: none;
+      background: transparent; border-radius: 9px;
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+      color: #64748b; cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+    }
+
+    .toggle-btn.active {
+      background: #fff;
+      color: #1a202c;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    /* FORM HEADER */
+    .form-header { margin-bottom: 24px; }
+
+    .form-eyebrow {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #64748b;
+      margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+    }
+
+    .badge-red {
+      display: inline-block; background: #e03a2f; color: #fff;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+      padding: 2px 8px; border-radius: 20px;
+    }
+
+    .form-title {
+      font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700;
+      color: #1a202c; line-height: 1.25; margin-bottom: 5px;
+    }
+
+    .form-subtitle { font-size: 13px; color: #64748b; line-height: 1.6; }
+
+    /* PROMISE */
+    .promise-row {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 10px; margin-bottom: 24px;
+    }
+
+    .promise-card {
+      background: #f7f8fc; border-radius: 10px;
+      padding: 12px 10px; text-align: center;
+    }
+
+    .promise-num {
+      font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700;
+      color: #1a2463; margin-bottom: 3px; line-height: 1.2;
+    }
+
+    .promise-label { font-size: 11px; color: #64748b; line-height: 1.4; }
+
+    /* STEPS */
+    .step-indicator { display: flex; align-items: center; margin-bottom: 24px; }
+    .step-item { display: flex; align-items: center; gap: 7px; flex: 1; }
+
+    .step-dot {
+      width: 26px; height: 26px; border-radius: 50%;
+      border: 1.5px solid #e2e8f0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 600; color: #64748b;
+      flex-shrink: 0; background: #fff;
+    }
+
+    .step-dot.active { background: #1a2463; border-color: #1a2463; color: #fff; }
+    .step-dot.done { background: #0f766e; border-color: #0f766e; color: #fff; }
+
+    .step-label { font-size: 11px; color: #64748b; white-space: nowrap; }
+
+    @media (max-width: 480px) { .step-label { display: none; } }
+
+    .step-line { flex: 1; height: 1px; background: #e2e8f0; margin: 0 5px; }
+    .step-line.done { background: #0f766e; }
+
+    /* SECTION */
+    .section-label {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.09em;
+      text-transform: uppercase; color: #64748b;
+      margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+    }
+
+    .section-label::after { content: ''; flex: 1; height: 1px; background: #e2e8f0; }
+
+    /* FIELDS */
+    .field-group { margin-bottom: 14px; }
+
+    .field-label {
+      display: block; font-size: 13px; font-weight: 500;
+      color: #1a202c; margin-bottom: 5px;
+    }
+
+    .field-label .req { color: #e03a2f; margin-left: 2px; }
+    .field-hint { font-size: 11px; color: #64748b; margin-top: 3px; }
+
+    input[type=text], input[type=email], input[type=tel],
+    input[type=number], select, textarea {
+      width: 100%; border: 1px solid #e2e8f0;
+      border-radius: 8px; padding: 9px 13px;
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      color: #1a202c; background: #fff;
+      outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: #1a2463;
+      box-shadow: 0 0 0 3px rgba(26,36,99,0.1);
+    }
+
+    textarea { resize: vertical; min-height: 80px; }
+
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    @media (max-width: 480px) { .field-row { grid-template-columns: 1fr; } }
+
+    /* R$ INPUT */
+    .input-rs-wrap {
+      display: flex; align-items: center;
+      border: 1px solid #e2e8f0; border-radius: 8px;
+      overflow: hidden; max-width: 240px; background: #fff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .input-rs-wrap:focus-within {
+      border-color: #1a2463;
+      box-shadow: 0 0 0 3px rgba(26,36,99,0.1);
+    }
+
+    .rs-prefix {
+      padding: 9px 10px 9px 13px; font-size: 14px; font-weight: 500;
+      color: #64748b; background: #f1f5f9;
+      border-right: 1px solid #e2e8f0;
+      user-select: none; white-space: nowrap; line-height: 1;
+    }
+
+    .input-rs-wrap input {
+      border: none; outline: none; padding: 9px 13px;
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      color: #1a202c; background: transparent; width: 100%;
+      box-shadow: none;
+    }
+
+    /* PILLS */
+    .radio-group { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
+
+    .radio-pill {
+      display: flex; align-items: center; gap: 5px;
+      padding: 6px 13px; border: 1px solid #e2e8f0;
+      border-radius: 999px; cursor: pointer; font-size: 12px;
+      color: #64748b; transition: all 0.2s;
+      background: #fff; user-select: none;
+    }
+
+    .radio-pill:hover { border-color: #1a2463; color: #1a202c; }
+    .radio-pill.selected { background: #1a2463; border-color: #1a2463; color: #fff; }
+    .radio-pill input { display: none; }
+
+    /* CHECK CARDS */
+    .check-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 7px; margin-top: 4px;
+    }
+
+    .check-card {
+      display: flex; align-items: center; gap: 7px;
+      padding: 8px 11px; border: 1px solid #e2e8f0;
+      border-radius: 8px; cursor: pointer; font-size: 12px;
+      color: #64748b; transition: all 0.2s;
+      user-select: none; background: #fff;
+    }
+
+    .check-card:hover { border-color: #1a2463; }
+
+    .check-card.selected {
+      border-color: #1a2463;
+      background: rgba(26,36,99,0.05);
+      color: #1a202c;
+    }
+
+    .cb-box {
+      width: 15px; height: 15px; border: 1.5px solid #e2e8f0;
+      border-radius: 4px; display: flex; align-items: center;
+      justify-content: center; flex-shrink: 0; transition: all 0.2s;
+    }
+
+    .check-card.selected .cb-box { background: #1a2463; border-color: #1a2463; color: #fff; }
+
+    /* BUTTONS */
+    .nav-row {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-top: 24px; gap: 12px;
+    }
+
+    .btn-back {
+      padding: 9px 18px; border: 1px solid #e2e8f0;
+      border-radius: 8px; background: transparent;
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      color: #64748b; cursor: pointer;
+      display: flex; align-items: center; gap: 5px; transition: all 0.2s;
+    }
+
+    .btn-back:hover { background: #f1f5f9; }
+
+    .btn-next {
+      padding: 10px 26px; border: none; border-radius: 8px;
+      background: #1a2463; font-family: 'DM Sans', sans-serif;
+      font-size: 13px; font-weight: 600; color: #fff; cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+      transition: all 0.2s; margin-left: auto;
+    }
+
+    .btn-next:hover { background: #0a1845; }
+
+    .btn-submit {
+      padding: 11px 28px; border: none; border-radius: 8px;
+      background: #e03a2f; font-family: 'DM Sans', sans-serif;
+      font-size: 14px; font-weight: 700; color: #fff; cursor: pointer;
+      display: flex; align-items: center; gap: 7px;
+      transition: all 0.2s; margin-left: auto;
+    }
+
+    .btn-submit:hover { background: #c02e24; }
+
+    /* BANNERS */
+    .info-banner {
+      background: rgba(26,36,99,0.05); border: 1px solid rgba(26,36,99,0.15);
+      border-radius: 8px; padding: 11px 14px; font-size: 12px;
+      color: #64748b; display: flex; align-items: flex-start;
+      gap: 9px; margin-bottom: 18px;
+    }
+
+    .divider { height: 1px; background: #e2e8f0; margin: 18px 0; }
+
+    /* SUCCESS */
+    .success-box { text-align: center; padding: 48px 20px; }
+
+    .success-icon {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: rgba(15,118,110,0.1);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px; font-size: 32px; color: #0f766e;
+    }
+
+    .success-title {
+      font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700;
+      color: #1a202c; margin-bottom: 10px;
+    }
+
+    .success-text {
+      font-size: 14px; color: #64748b; line-height: 1.7;
+      max-width: 360px; margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+
+  <!-- LOGO -->
+  <div class="escard-header">
+    <img
+      src="https://pages.greatpages.com.br/www.escardcartoes.com.br/1772127302/imagens/desktop/9652-a53a26ec75d6bb208e0896f3e8374982.png"
+      alt="Escard Cartões"
+      onerror="this.style.display='none';document.getElementById('logo-fallback').style.display='flex';">
+    <div id="logo-fallback" class="logo-fallback">
+      <span style="color:#1a2463;">ES</span><span style="color:#e03a2f;">CARD</span>
+    </div>
+  </div>
+
+  <!-- TOGGLE -->
+  <div class="form-toggle">
+    <button class="toggle-btn active" id="btn-cred" onclick="switchForm('cred')">
+      <i class="ti ti-building-store"></i> Novo Credenciamento
+    </button>
+    <button class="toggle-btn" id="btn-client" onclick="switchForm('client')">
+      <i class="ti ti-briefcase"></i> Novo Cliente Empresa
+    </button>
+  </div>
+
+  <!-- ==================== CREDENCIAMENTO ==================== -->
+  <div id="form-cred">
+    <div class="form-header">
+      <div class="form-eyebrow"><span class="badge-red">PARCEIRO</span> Credenciamento de Estabelecimento</div>
+      <div class="form-title">Torne-se um parceiro Escard</div>
+      <div class="form-subtitle">Preencha os dados e nossa equipe entrará em contato em até 24 horas.</div>
+    </div>
+
+    <div class="promise-row">
+      <div class="promise-card"><div class="promise-num">24h</div><div class="promise-label">Retorno garantido</div></div>
+      <div class="promise-card"><div class="promise-num">Zero</div><div class="promise-label">Taxa de adesão</div></div>
+      <div class="promise-card"><div class="promise-num">+10 mi</div><div class="promise-label">Estabelecimentos credenciados</div></div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div id="cred-step-1">
+      <div class="step-indicator">
+        <div class="step-item"><div class="step-dot active">1</div><span class="step-label" style="color:#1a202c">Estabelecimento</span></div>
+        <div class="step-line"></div>
+        <div class="step-item"><div class="step-dot">2</div><span class="step-label">Pagamentos</span></div>
+        <div class="step-line"></div>
+        <div class="step-item"><div class="step-dot">3</div><span class="step-label">Dados bancários</span></div>
+        <div class="step-line"></div>
+        <div class="step-item"><div class="step-dot">4</div><span class="step-label">Acesso</span></div>
+      </div>
+
+      <div class="section-label">Dados do estabelecimento</div>
+
+      <div class="field-group">
+        <label class="field-label">Nome fantasia / razão social <span class="req">*</span></label>
+        <input type="text" placeholder="Ex: Restaurante do João LTDA">
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">CNPJ <span class="req">*</span></label>
+          <input type="text" placeholder="00.000.000/0001-00">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Segmento <span class="req">*</span></label>
+          <select>
+            <option value="">Selecione...</option>
+            <option>Alimentação / Restaurante</option>
+            <option>Supermercado / Mercearia</option>
+            <option>Posto de combustível</option>
+            <option>Farmácia / Drogaria</option>
+            <option>Vestuário / Moda</option>
+            <option>Saúde e bem-estar</option>
+            <option>Educação</option>
+            <option>Outros</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Endereço completo <span class="req">*</span></label>
+        <input type="text" placeholder="Rua, número, bairro, cidade — UF">
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Responsável <span class="req">*</span></label>
+          <input type="text" placeholder="Nome do responsável">
+        </div>
+        <div class="field-group">
+          <label class="field-label">WhatsApp <span class="req">*</span></label>
+          <input type="tel" placeholder="(27) 99999-9999">
+        </div>
+      </div>
+      <div class="nav-row">
+        <span></span>
+        <button class="btn-next" onclick="go('cred',1,2)">Próximo <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div id="cred-step-2" style="display:none">
+      <div class="step-indicator">
+        <div class="step-item"><div class="step-dot done"><i class="ti ti-check" style="font-size:11px"></i></div><span class="step-label">Estabelecimento</span></div>
+        <div class="step-line done"></div>
+        <div class="step-item"><div class="step-dot active">2</div><span class="step-label" style="color:#1a202c">Pagamentos</span></div>
+        <div class="step-line"></div>
+        <div class="step-item"><div class="step-dot">3</div><span class="step-label">Dados bancários</span></div>
+        <div class="step-line"></div>
+        <div class="step-item"><div class="step-dot">4</div><span class="step-label">Acesso</span></div>
+      </div>
+
+      <div class="section-label">Cartões que deseja aceitar</div>
+      <div class="field-group">
+        <div class="check-grid">
+          <label class="check-card" onclick="toggleCheck(this)"><span class="cb-box"><i class="ti ti-check" style="font-size:9px"></i></span>Alimentação</label>
+          <label class="check-card" onclick="toggleCheck(this)"><span class="cb-box"><i class="ti ti-check" style="font-size:9px"></i></span>Refeição</label>
+          <label class="check-card" onclick="toggleCheck(this)"><span class="cb-box"><i class="ti ti-check" style="font-size:9px"></i></span>Combustível</label>
+          <label class="check-card" onclick="toggleCheck(this)"><span class="cb-box"><i class="ti ti-check" style="font-size:9px"></i></span>Cultura</label>
+          <label class="check-card" onclick="toggleCheck(this)"><span class="cb-box"><i class="ti ti-check" style="font-size:9px"></i></span>Premiação</label>
+          <label class="check-card" onclick="toggleCheck(this)"><span class="cb-box"><i class="ti ti-check" style="font-size:9px"></i></span>Despesas</label>
+          <label class="check-card" onclick="toggleCheck(this)"><span class="cb-box"><i class="ti ti-check" style="font-size:9px"></i></span>Private Label</label>
+          <label class="check-card" onclick="toggleCheck(this)"><span class="cb-box"><i class="ti ti-check" style="font-size:9px"></i></span>DM Card</label>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-label">Meios de pagamento</div>
+      <div class="field-group">
+        <div class="check-grid">
+          <label class="check-card" onclick="toggleCheck(this)"><span class="cb-box"><i class="ti ti-check" style="font-size:9px"></i></span>TEF</label>
+          <label class="check-card" onclick="toggleCheck(this)"><span class="cb-box"><i class="ti ti-check" style="font-size:9px"></i></span>QR Code</label>
+          <label class="check-card" onclick="toggleCheck(this)"><span class="cb-box"><i class="ti ti-check" style="font-size:9px"></i></span>Web</label>
+          <label class="check-card" onclick="toggleCheck(this)"><span class="cb-box"><i class="ti ti-check" style="font-size:9px"></i></span>App</label>
+          <label class="check-card" onclick="toggleCheck(this)"><span class="cb-box"><i class="ti ti-check" style="font-size:9px"></i></span>POS</label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Já aceita outros cartões de benefícios?</label>
+        <div class="radio-group" id="cred-outros">
+          <label class="radio-pill" onclick="selectPill(this,'cred-outros')"><input type="radio">Sim</label>
+          <label class="radio-pill" onclick="selectPill(this,'cred-outros')"><input type="radio">Não</label>
+        </div>
+      </div>
+      <div class="nav-row">
+        <button class="btn-back" onclick="go('cred',2,1)"><i class="ti ti-arrow-left"></i> Voltar</button>
+        <button class="btn-next" onclick="go('cred',2,3)">Próximo <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div id="cred-step-3" style="display:none">
+      <div class="step-indicator">
+        <div class="step-item"><div class="step-dot done"><i class="ti ti-check" style="font-size:11px"></i></div><span class="step-label">Estabelecimento</span></div>
+        <div class="step-line done"></div>
+        <div class="step-item"><div class="step-dot done"><i class="ti ti-check" style="font-size:11px"></i></div><span class="step-label">Pagamentos</span></div>
+        <div class="step-line done"></div>
+        <div class="step-item"><div class="step-dot active">3</div><span class="step-label" style="color:#1a202c">Dados bancários</span></div>
+        <div class="step-line"></div>
+        <div class="step-item"><div class="step-dot">4</div><span class="step-label">Acesso</span></div>
+      </div>
+
+      <div class="section-label">Dados bancários para liquidação</div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Banco <span class="req">*</span></label>
+          <input type="text" placeholder="Ex: 341 — Itaú, 001 — BB">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Tipo de conta <span class="req">*</span></label>
+          <select>
+            <option value="">Selecione...</option>
+            <option>Conta corrente</option>
+            <option>Conta poupança</option>
+            <option>Conta pagamento</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Agência <span class="req">*</span></label>
+          <input type="text" placeholder="0000">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Conta <span class="req">*</span></label>
+          <input type="text" placeholder="00000-0">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">CPF / CNPJ do titular <span class="req">*</span></label>
+          <input type="text" placeholder="Titular da conta">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Nome do titular <span class="req">*</span></label>
+          <input type="text" placeholder="Conforme cadastro bancário">
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-label">Chave PIX</div>
+
+      <div class="field-group">
+        <label class="field-label">Tipo de chave PIX</label>
+        <div class="radio-group" id="cred-pix">
+          <label class="radio-pill" onclick="selectPill(this,'cred-pix')"><input type="radio">CPF / CNPJ</label>
+          <label class="radio-pill" onclick="selectPill(this,'cred-pix')"><input type="radio">E-mail</label>
+          <label class="radio-pill" onclick="selectPill(this,'cred-pix')"><input type="radio">Telefone</label>
+          <label class="radio-pill" onclick="selectPill(this,'cred-pix')"><input type="radio">Chave aleatória</label>
+          <label class="radio-pill" onclick="selectPill(this,'cred-pix')"><input type="radio">Não tenho PIX</label>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Chave PIX</label>
+        <input type="text" placeholder="Informe a chave PIX">
+        <div class="field-hint">Deixe em branco caso não tenha chave cadastrada</div>
+      </div>
+      <div class="nav-row">
+        <button class="btn-back" onclick="go('cred',3,2)"><i class="ti ti-arrow-left"></i> Voltar</button>
+        <button class="btn-next" onclick="go('cred',3,4)">Próximo <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div id="cred-step-4" style="display:none">
+      <div class="step-indicator">
+        <div class="step-item"><div class="step-dot done"><i class="ti ti-check" style="font-size:11px"></i></div><span class="step-label">Estabelecimento</span></div>
+        <div class="step-line done"></div>
+        <div class="step-item"><div class="step-dot done"><i class="ti ti-check" style="font-size:11px"></i></div><span class="step-label">Pagamentos</span></div>
+        <div class="step-line done"></div>
+        <div class="step-item"><div class="step-dot done"><i class="ti ti-check" style="font-size:11px"></i></div><span class="step-label">Dados bancários</span></div>
+        <div class="step-line done"></div>
+        <div class="step-item"><div class="step-dot active">4</div><span class="step-label" style="color:#1a202c">Acesso</span></div>
+      </div>
+
+      <div class="section-label">Usuário para acesso ao sistema</div>
+      <div class="info-banner">
+        <i class="ti ti-user-shield" style="font-size:15px;margin-top:1px;flex-shrink:0"></i>
+        <span>Esses dados criarão o login de acesso ao painel Escard do seu estabelecimento.</span>
+      </div>
+
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Nome completo <span class="req">*</span></label>
+          <input type="text" placeholder="Nome do usuário principal">
+        </div>
+        <div class="field-group">
+          <label class="field-label">CPF <span class="req">*</span></label>
+          <input type="text" placeholder="000.000.000-00">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">E-mail de acesso <span class="req">*</span></label>
+          <input type="email" placeholder="usuario@empresa.com">
+          <div class="field-hint">Será o login no sistema</div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Telefone / WhatsApp <span class="req">*</span></label>
+          <input type="tel" placeholder="(27) 99999-9999">
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Cargo / função</label>
+        <input type="text" placeholder="Ex: Proprietário, Gerente, Financeiro">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Observações</label>
+        <textarea placeholder="Alguma informação adicional para a equipe Escard..."></textarea>
+      </div>
+      <div class="info-banner">
+        <i class="ti ti-lock" style="font-size:15px;margin-top:1px;flex-shrink:0"></i>
+        <span>Dados protegidos e utilizados exclusivamente para o credenciamento. Informações bancárias tratadas com sigilo absoluto.</span>
+      </div>
+      <div class="nav-row">
+        <button class="btn-back" onclick="go('cred',4,3)"><i class="ti ti-arrow-left"></i> Voltar</button>
+        <button class="btn-submit" onclick="showSuccess('cred')"><i class="ti ti-send"></i> Enviar solicitação</button>
+      </div>
+    </div>
+
+    <!-- SUCCESS CRED -->
+    <div id="cred-success" style="display:none">
+      <div class="success-box">
+        <div class="success-icon"><i class="ti ti-circle-check"></i></div>
+        <div class="success-title">Solicitação recebida!</div>
+        <div class="success-text">Nossa equipe analisará seu cadastro e entrará em contato via WhatsApp em até <strong>24 horas úteis</strong> para concluir o credenciamento.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== NOVO CLIENTE ==================== -->
+  <div id="form-client" style="display:none">
+    <div class="form-header">
+      <div class="form-eyebrow"><span class="badge-red">EMPRESA</span> Proposta Comercial</div>
+      <div class="form-title">Benefícios que a sua equipe merece</div>
+      <div class="form-subtitle">Receba uma proposta personalizada em até 24 horas — sem compromisso.</div>
+    </div>
+
+    <div class="promise-row">
+      <div class="promise-card"><div class="promise-num">24h</div><div class="promise-label">Proposta personalizada</div></div>
+      <div class="promise-card"><div class="promise-num">Zero</div><div class="promise-label">Taxa de adesão</div></div>
+      <div class="promise-card"><div class="promise-num">+10 mi</div><div class="promise-label">Estabelecimentos credenciados</div></div>
+    </div>
+
+    <!-- CLIENT STEP 1 -->
+    <div id="client-step-1">
+      <div class="step-indicator">
+        <div class="step-item"><div class="step-dot active">1</div><span class="step-label" style="color:#1a202c">Empresa</span></div>
+        <div class="step-line"></div>
+        <div class="step-item"><div class="step-dot">2</div><span class="step-label">Benefícios</span></div>
+        <div class="step-line"></div>
+        <div class="step-item"><div class="step-dot">3</div><span class="step-label">Contato</span></div>
+      </div>
+
+      <div class="section-label">Sobre a empresa</div>
+      <div class="field-group">
+        <label class="field-label">Nome da empresa <span class="req">*</span></label>
+        <input type="text" placeholder="Razão social ou nome fantasia">
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">CNPJ</label>
+          <input type="text" placeholder="00.000.000/0001-00">
+          <div class="field-hint">Opcional neste momento</div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Setor / Ramo <span class="req">*</span></label>
+          <select>
+            <option value="">Selecione...</option>
+            <option>Comércio</option>
+            <option>Indústria</option>
+            <option>Serviços</option>
+            <option>Saúde</option>
+            <option>Educação</option>
+            <option>Construção civil</option>
+            <option>Agronegócio</option>
+            <option>Tecnologia</option>
+            <option>Setor público</option>
+            <option>Outros</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Número de colaboradores <span class="req">*</span></label>
+        <input type="number" min="1" step="1" placeholder="Ex: 45" style="max-width:200px;">
+        <div class="field-hint">Informe a quantidade total de colaboradores</div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Cidade / Estado <span class="req">*</span></label>
+        <input type="text" placeholder="Ex: Vitória — ES">
+      </div>
+      <div class="nav-row">
+        <span></span>
+        <button class="btn-next" onclick="go('client',1,2)">Próximo <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- CLIENT STEP 2 -->
+    <div id="client-step-2" style="display:none">
+      <div class="step-indicator">
+        <div class="step-item"><div class="step-dot done"><i class="ti ti-check" style="font-size:11px"></i></div><span class="step-label">Empresa</span></div>
+        <div class="step-line done"></div>
+        <div class="step-item"><div class="step-dot active">2</div><span class="step-label" style="color:#1a202c">Benefícios</span></div>
+        <div class="step-line"></div>
+        <div class="step-item"><div class="step-dot">3</div><span class="step-label">Contato</span></div>
+      </div>
+
+      <div class="section-label">Benefícios desejados</div>
+      <div class="field-group">
+        <label class="field-label">Quais benefícios tem interesse? <span class="req">*</span></label>
+        <div class="check-grid">
+          <label class="check-card" onclick="toggleCheck(this)"><span class="cb-box"><i class="ti ti-check" style="font-size:9px"></i></span>Alimentação</label>
+          <label class="check-card" onclick="toggleCheck(this)"><span class="cb-box"><i class="ti ti-check" style="font-size:9px"></i></span>Refeição</label>
+          <label class="check-card" onclick="toggleCheck(this)"><span class="cb-box"><i class="ti ti-check" style="font-size:9px"></i></span>Combustível</label>
+          <label class="check-card" onclick="toggleCheck(this)"><span class="cb-box"><i class="ti ti-check" style="font-size:9px"></i></span>Despesas</label>
+          <label class="check-card" onclick="toggleCheck(this)"><span class="cb-box"><i class="ti ti-check" style="font-size:9px"></i></span>Premiação</label>
+          <label class="check-card" onclick="toggleCheck(this)"><span class="cb-box"><i class="ti ti-check" style="font-size:9px"></i></span>Private Label</label>
+          <label class="check-card" onclick="toggleCheck(this)"><span class="cb-box"><i class="ti ti-check" style="font-size:9px"></i></span>Wellhub</label>
+          <label class="check-card" onclick="toggleCheck(this)"><span class="cb-box"><i class="ti ti-check" style="font-size:9px"></i></span>Vidalink</label>
+          <label class="check-card" onclick="toggleCheck(this)"><span class="cb-box"><i class="ti ti-check" style="font-size:9px"></i></span>Viva+</label>
+          <label class="check-card" onclick="toggleCheck(this)"><span class="cb-box"><i class="ti ti-check" style="font-size:9px"></i></span>DM Card</label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Valor médio por colaborador/mês <span class="req">*</span></label>
+        <div class="input-rs-wrap">
+          <span class="rs-prefix">R$</span>
+          <input type="number" min="0" step="1" placeholder="500">
+        </div>
+        <div class="field-hint">Valor aproximado em reais por colaborador ao mês</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Possui fornecedor atual?</label>
+        <div class="radio-group" id="client-atual">
+          <label class="radio-pill" onclick="selectPill(this,'client-atual')"><input type="radio">Sim, quero migrar</label>
+          <label class="radio-pill" onclick="selectPill(this,'client-atual')"><input type="radio">Sim, quero complementar</label>
+          <label class="radio-pill" onclick="selectPill(this,'client-atual')"><input type="radio">Não, é a primeira vez</label>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Prazo para implementação</label>
+        <div class="radio-group" id="client-prazo">
+          <label class="radio-pill" onclick="selectPill(this,'client-prazo')"><input type="radio">Imediato</label>
+          <label class="radio-pill" onclick="selectPill(this,'client-prazo')"><input type="radio">Em até 30 dias</label>
+          <label class="radio-pill" onclick="selectPill(this,'client-prazo')"><input type="radio">Em até 90 dias</label>
+          <label class="radio-pill" onclick="selectPill(this,'client-prazo')"><input type="radio">Apenas cotando</label>
+        </div>
+      </div>
+      <div class="nav-row">
+        <button class="btn-back" onclick="go('client',2,1)"><i class="ti ti-arrow-left"></i> Voltar</button>
+        <button class="btn-next" onclick="go('client',2,3)">Próximo <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- CLIENT STEP 3 -->
+    <div id="client-step-3" style="display:none">
+      <div class="step-indicator">
+        <div class="step-item"><div class="step-dot done"><i class="ti ti-check" style="font-size:11px"></i></div><span class="step-label">Empresa</span></div>
+        <div class="step-line done"></div>
+        <div class="step-item"><div class="step-dot done"><i class="ti ti-check" style="font-size:11px"></i></div><span class="step-label">Benefícios</span></div>
+        <div class="step-line done"></div>
+        <div class="step-item"><div class="step-dot active">3</div><span class="step-label" style="color:#1a202c">Contato</span></div>
+      </div>
+
+      <div class="section-label">Quem receberá a proposta</div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Nome completo <span class="req">*</span></label>
+          <input type="text" placeholder="Seu nome">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Cargo <span class="req">*</span></label>
+          <input type="text" placeholder="Ex: Gerente de RH, CEO">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">WhatsApp <span class="req">*</span></label>
+          <input type="tel" placeholder="(27) 99999-9999">
+        </div>
+        <div class="field-group">
+          <label class="field-label">E-mail corporativo <span class="req">*</span></label>
+          <input type="email" placeholder="voce@empresa.com">
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Como prefere ser atendido?</label>
+        <div class="radio-group" id="client-canal">
+          <label class="radio-pill" onclick="selectPill(this,'client-canal')"><input type="radio">WhatsApp</label>
+          <label class="radio-pill" onclick="selectPill(this,'client-canal')"><input type="radio">Ligação</label>
+          <label class="radio-pill" onclick="selectPill(this,'client-canal')"><input type="radio">E-mail</label>
+          <label class="radio-pill" onclick="selectPill(this,'client-canal')"><input type="radio">Reunião online</label>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Necessidade específica?</label>
+        <textarea placeholder="Ex: equipe de campo, migração, orçamento específico..."></textarea>
+      </div>
+      <div class="info-banner">
+        <i class="ti ti-shield-check" style="font-size:15px;margin-top:1px;flex-shrink:0"></i>
+        <span>Proposta personalizada, sem compromisso. Seus dados são tratados com total confidencialidade.</span>
+      </div>
+      <div class="nav-row">
+        <button class="btn-back" onclick="go('client',3,2)"><i class="ti ti-arrow-left"></i> Voltar</button>
+        <button class="btn-submit" onclick="showSuccess('client')"><i class="ti ti-send"></i> Solicitar proposta</button>
+      </div>
+    </div>
+
+    <!-- SUCCESS CLIENT -->
+    <div id="client-success" style="display:none">
+      <div class="success-box">
+        <div class="success-icon"><i class="ti ti-circle-check"></i></div>
+        <div class="success-title">Proposta em preparação!</div>
+        <div class="success-text">Nossa equipe preparará uma proposta personalizada e entrará em contato em até <strong>24 horas úteis</strong>.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function switchForm(w) {
+    document.getElementById('form-cred').style.display = w === 'cred' ? 'block' : 'none';
+    document.getElementById('form-client').style.display = w === 'client' ? 'block' : 'none';
+    document.getElementById('btn-cred').className = 'toggle-btn' + (w === 'cred' ? ' active' : '');
+    document.getElementById('btn-client').className = 'toggle-btn' + (w === 'client' ? ' active' : '');
+  }
+
+  function go(f, from, to) {
+    document.getElementById(f + '-step-' + from).style.display = 'none';
+    document.getElementById(f + '-step-' + to).style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showSuccess(f) {
+    var last = f === 'cred' ? 4 : 3;
+    document.getElementById(f + '-step-' + last).style.display = 'none';
+    document.getElementById(f + '-success').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function selectPill(el, g) {
+    document.querySelectorAll('#' + g + ' .radio-pill').forEach(p => p.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function toggleCheck(el) {
+    el.classList.toggle('selected');
+  }
+</script>
+</body>
+</html>
